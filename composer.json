@@ -1,0 +1,18 @@
+{
+	"name": "hinyka/lbc",
+	"version": "1.0",
+	"description": "Leverage browser Caching library for 3rd party resources",
+	"type": "package",
+	"license": ["New BSD License"],
+	"homepage": "https://github.com/Hinyka/lbc",
+	"authors": [
+		{
+			"name": "Karel Hink",
+			"email": "info@karelhink.cz",
+			"homepage": "http://www.karelhink.cz"
+		}
+	],
+	"require": {
+		"php": ">=5.3.0"
+	}
+}

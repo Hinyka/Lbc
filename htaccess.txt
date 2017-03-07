@@ -1,0 +1,49 @@
+##### Optimal default expiration time - BEGIN
+<IfModule mod_expires.c>
+	# Enable expiration control
+	ExpiresActive On
+
+	# Default expiration: 1 hour after request
+	ExpiresDefault "now plus 1 hour"
+
+	# CSS and JS expiration: 1 week after request
+	ExpiresByType text/css "now plus 1 week"
+	ExpiresByType application/javascript "now plus 1 week"
+	ExpiresByType application/x-javascript "now plus 1 week"
+</IfModule>
+##### Optimal default expiration time - END
+
+##### Automatic compression of resources -- BEGIN
+<ifmodule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/css application/javascript application/x-javascript
+</ifmodule>
+
+<ifModule mod_gzip.c>
+mod_gzip_on Yes
+mod_gzip_dechunk Yes
+mod_gzip_keep_workfiles No
+mod_gzip_can_negotiate Yes
+mod_gzip_add_header_count Yes
+mod_gzip_send_vary Yes
+mod_gzip_min_http 1000
+mod_gzip_minimum_file_size 300
+mod_gzip_maximum_file_size 512000
+mod_gzip_maximum_inmem_size 60000
+mod_gzip_handle_methods GET
+mod_gzip_item_include file \.(css|js)$
+mod_gzip_item_include mime ^text/css$
+mod_gzip_item_include mime ^application/javascript$
+mod_gzip_item_include mime ^application/x-javascript$
+</ifmodule>
+##### Automatic compression of resources -- END
+
+## Force GZip compression for mangled Accept-Encoding headers
+<IfModule mod_setenvif.c>
+    <IfModule mod_headers.c>
+        SetEnvIfNoCase ^(Accept-EncodXng|X-cept-Encoding|X{15}|~{15}|-{15})$ ^((gzip|deflate)\s*,?\s*)+|[X~-]{4,13}$ HAVE_Accept-Encoding
+        RequestHeader append Accept-Encoding "gzip,deflate" env=HAVE_Accept-Encoding
+    </IfModule>
+</IfModule>
+
+## Send ETag (selected method: sizetime)
+FileETag MTime Size
