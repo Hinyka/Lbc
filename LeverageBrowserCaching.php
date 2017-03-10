@@ -8,7 +8,7 @@
  * @author Karel Hink <info@karelhink.cz>
  * @copyright (c) 2017, Karel Hink
  * @license LICENSE.txt New BSD License
- * @version 1.0
+ * @version 1.1
  */
 
 namespace Hinyka\Lbc;
@@ -57,6 +57,12 @@ class LeverageBrowserCaching
 	 * @var string The contents of the downloaded file
 	 */
 	private $data;
+
+	/**
+	 *
+	 * @var bolean Minify the downloaded file or not
+	 */
+	private $minify;
 
 	/**
 	 *
@@ -117,6 +123,20 @@ class LeverageBrowserCaching
 	}
 
 	/**
+	 * Sets whether Minify file or not
+	 * 
+	 * @param bolean $minify
+	 */
+	public function setMinify($minify = FALSE)
+	{
+		if ($minify === TRUE) {
+			$this->minify = TRUE;
+		} else {
+			$this->minify = FALSE;
+		}
+	}
+
+	/**
 	 * Launch the application
 	 * 
 	 * @return boolean
@@ -129,6 +149,12 @@ class LeverageBrowserCaching
 
 		if (!$this->downloadSource()) {
 			return FALSE;
+		}
+		
+		if ($this->minify === TRUE) {
+			if (!$this->minifySource()) {
+				return FALSE;
+			}
 		}
 
 		if (!$this->saveSource()) {
@@ -254,6 +280,40 @@ class LeverageBrowserCaching
 			return TRUE;
 		} else {
 			$this->logMessage[] = "File [" . $this->source . "] has not been downloaded successfully.";
+			return FALSE;
+		}
+	}
+
+	/**
+	 * Minify the downloaded file
+	 * 
+	 * @return bolean
+	 */
+	private function minifySource()
+	{
+		$url = 'http://closure-compiler.appspot.com/compile';
+		
+		$data = 'output_info=compiled_code&output_format=text&compilation_level=SIMPLE_OPTIMIZATIONS&js_code=' . urlencode($this->data);
+
+		$ch = curl_init($url);
+		
+		curl_setopt($ch, CURLOPT_POST, 1);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 60);
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+		curl_setopt($ch, CURLOPT_MAXREDIRS, 3);
+
+		$dataMinified = str_replace(["\r\n", "\r", "\n"], "", curl_exec($ch));
+
+		curl_close($ch);
+
+		if (!empty($dataMinified)) {
+			$this->data = $dataMinified;
+			$this->logMessage[] = "File [" . $this->source . "] has been minified successfully.";
+			return TRUE;
+		} else {
+			$this->logMessage[] = "File [" . $this->source . "] has not been minified successfully.";
 			return FALSE;
 		}
 	}

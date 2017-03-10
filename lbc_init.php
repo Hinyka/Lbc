@@ -8,7 +8,7 @@
  * @author Karel Hink <info@karelhink.cz>
  * @copyright (c) 2017, Karel Hink
  * @license LICENSE.md New BSD License
- * @version 1.0
+ * @version 1.1
  */
 
 /**
@@ -48,6 +48,13 @@ foreach ($files as $name => $file) {
 	 * The default value is: 60*60*24 (24 hours)
 	 */
 	// $$name->setCacheTime(60*60*24);
+
+	/**
+	 * Minify the downloaded file or not
+	 * 
+	 * Possible values are TRUE or FALSE. Default value is FALSE.
+	 */
+	$$name->setMinify(TRUE);
 
 	/**
 	 * Launch the application

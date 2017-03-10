@@ -1,6 +1,6 @@
 {
 	"name": "hinyka/lbc",
-	"version": "1.0",
+	"version": "1.1",
 	"description": "Leverage browser Caching library for 3rd party resources",
 	"type": "package",
 	"license": ["New BSD License"],
@@ -13,6 +13,6 @@
 		}
 	],
 	"require": {
-		"php": ">=5.3.0"
+		"php": ">=5.4.0"
 	}
 }
